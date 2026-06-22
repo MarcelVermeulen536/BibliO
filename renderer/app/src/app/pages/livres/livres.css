@@ -1,0 +1,108 @@
+.page {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.carte {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.carte h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.form label {
+  display: block;
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.form input,
+.form select,
+.form textarea {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.ligne {
+  display: flex;
+  gap: 10px;
+}
+
+.ligne label {
+  flex: 1;
+}
+
+.genres-choix {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 4px 0 12px;
+}
+
+.genres-choix legend {
+  font-size: 13px;
+  color: #374151;
+  padding: 0 4px;
+}
+
+.case {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 12px;
+  font-size: 13px;
+}
+
+.case input {
+  width: auto;
+  margin: 0;
+}
+
+.champ-erreur {
+  color: #b91c1c;
+  font-size: 13px;
+  margin: 0 0 10px;
+}
+
+.form-boutons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-principal {
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-secondaire {
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.vide {
+  color: #9ca3af;
+  font-style: italic;
+}

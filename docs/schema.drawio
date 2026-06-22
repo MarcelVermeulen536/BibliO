@@ -1,0 +1,57 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="BiblioTheque" id="biblio-1">
+    <mxGraphModel dx="900" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="auteur" value="AUTEUR&#10;----------------&#10;PK id : INTEGER&#10;nom : TEXT&#10;prenom : TEXT" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="editeur" value="EDITEUR&#10;----------------&#10;PK id : INTEGER&#10;nom : TEXT (UNIQUE)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="180" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="livre" value="LIVRE&#10;----------------&#10;PK id : INTEGER&#10;titre : TEXT&#10;annee : INTEGER (null)&#10;resume : TEXT (null)&#10;statut : TEXT (CHECK)&#10;FK auteurId : INTEGER&#10;FK editeurId : INTEGER (null)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="400" y="150" width="220" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="genre" value="GENRE&#10;----------------&#10;PK id : INTEGER&#10;nom : TEXT (UNIQUE)&#10;couleur : TEXT" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="820" y="60" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="livregenre" value="LIVREGENRE (jonction N:M)&#10;----------------&#10;PK,FK livreId : INTEGER&#10;PK,FK genreId : INTEGER" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="820" y="220" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="membre" value="MEMBRE&#10;----------------&#10;PK id : INTEGER&#10;nom : TEXT&#10;email : TEXT (UNIQUE)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="400" y="470" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="emprunt" value="EMPRUNT&#10;----------------&#10;PK id : INTEGER&#10;dateEmprunt : TEXT&#10;dateRetour : TEXT (null)&#10;FK livreId : INTEGER&#10;FK membreId : INTEGER" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="820" y="430" width="220" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" value="1:N" style="endArrow=ERmany;startArrow=ERone;html=1;" edge="1" parent="1" source="auteur" target="livre">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="1:N" style="endArrow=ERmany;startArrow=ERone;html=1;" edge="1" parent="1" source="editeur" target="livre">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="1:N" style="endArrow=ERmany;startArrow=ERone;html=1;" edge="1" parent="1" source="livre" target="livregenre">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="1:N" style="endArrow=ERmany;startArrow=ERone;html=1;" edge="1" parent="1" source="genre" target="livregenre">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="1:N" style="endArrow=ERmany;startArrow=ERone;html=1;" edge="1" parent="1" source="livre" target="emprunt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="1:N" style="endArrow=ERmany;startArrow=ERone;html=1;" edge="1" parent="1" source="membre" target="emprunt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

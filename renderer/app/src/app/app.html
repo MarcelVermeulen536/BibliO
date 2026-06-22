@@ -1,0 +1,13 @@
+<header class="topbar">
+  <h1>BiblioTheque</h1>
+  <nav>
+    <!-- Navigation entre les deux pages (routerLink + etat actif) -->
+    <a routerLink="/livres" routerLinkActive="actif">Livres</a>
+    <a routerLink="/statistiques" routerLinkActive="actif">Statistiques</a>
+  </nav>
+</header>
+
+<main>
+  <!-- La page courante (Livres ou Statistiques) s'affiche ici -->
+  <router-outlet />
+</main>

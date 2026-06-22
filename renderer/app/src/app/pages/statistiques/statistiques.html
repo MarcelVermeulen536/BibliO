@@ -1,0 +1,39 @@
+<section class="page">
+  <h2>Statistiques</h2>
+
+  @if (stats(); as s) {
+    <!-- Compteurs globaux (agregat COUNT) -->
+    <div class="cartes-chiffres">
+      <div class="chiffre">
+        <span class="valeur">{{ s.totalLivres }}</span>
+        <span class="libelle">livres au total</span>
+      </div>
+      <div class="chiffre">
+        <span class="valeur">{{ s.totalEmpruntes }}</span>
+        <span class="libelle">actuellement empruntes</span>
+      </div>
+    </div>
+
+    <!-- Nombre de livres par genre (agregat _count par genre) -->
+    <div class="carte">
+      <h3>Livres par genre</h3>
+      @for (g of s.parGenre; track g.nom) {
+        <div class="ligne-genre">
+          <span class="nom-genre">{{ g.nom }}</span>
+          <div class="barre-fond">
+            <div
+              class="barre"
+              [style.width.%]="largeurBarre(g.nbLivres)"
+              [style.background-color]="g.couleur">
+            </div>
+          </div>
+          <span class="nb">{{ g.nbLivres }}</span>
+        </div>
+      } @empty {
+        <p class="vide">Aucun genre enregistre.</p>
+      }
+    </div>
+  } @else {
+    <p class="vide">Chargement des statistiques...</p>
+  }
+</section>

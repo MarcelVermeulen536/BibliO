@@ -1,0 +1,32 @@
+<div class="livre-item">
+  <div class="livre-info">
+    <h3>
+      {{ livre().titre }}
+      @if (livre().annee) {
+        <span class="annee">({{ livre().annee }})</span>
+      }
+    </h3>
+
+    <p class="auteur">
+      {{ livre().auteur.prenom }} {{ livre().auteur.nom }}
+      @if (livre().editeur) {
+        <span class="editeur"> &middot; {{ livre().editeur!.nom }}</span>
+      }
+    </p>
+
+    <!-- Liste des genres du livre (relation N:M) -->
+    <div class="genres">
+      @for (lien of livre().genres; track lien.genre.id) {
+        <span class="badge" [style.background-color]="lien.genre.couleur">
+          {{ lien.genre.nom }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <div class="livre-actions">
+    <span class="statut statut-{{ livre().statut }}">{{ livre().statut }}</span>
+    <button class="btn btn-modifier" (click)="onModifier()">Modifier</button>
+    <button class="btn btn-supprimer" (click)="onSupprimer()">Supprimer</button>
+  </div>
+</div>

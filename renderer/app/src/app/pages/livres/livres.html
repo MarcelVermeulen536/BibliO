@@ -1,0 +1,99 @@
+<section class="page">
+  <!-- Formulaire de creation / modification (formulaire reactif) -->
+  <form class="carte form" [formGroup]="form" (ngSubmit)="enregistrer()">
+    <h2>{{ editionId() === null ? 'Ajouter un livre' : 'Modifier le livre' }}</h2>
+
+    <label>
+      Titre *
+      <input type="text" formControlName="titre" placeholder="Titre du livre" />
+    </label>
+    @if (form.controls.titre.touched && form.controls.titre.invalid) {
+      <p class="champ-erreur">Le titre est obligatoire.</p>
+    }
+
+    <div class="ligne">
+      <label>
+        Auteur *
+        <select formControlName="auteurId">
+          <option [ngValue]="null">-- Choisir --</option>
+          @for (a of auteurs(); track a.id) {
+            <option [ngValue]="a.id">{{ a.prenom }} {{ a.nom }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Editeur
+        <select formControlName="editeurId">
+          <option [ngValue]="null">-- Aucun --</option>
+          @for (e of editeurs(); track e.id) {
+            <option [ngValue]="e.id">{{ e.nom }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    @if (form.controls.auteurId.touched && form.controls.auteurId.invalid) {
+      <p class="champ-erreur">L'auteur est obligatoire.</p>
+    }
+
+    <div class="ligne">
+      <label>
+        Annee
+        <input type="number" formControlName="annee" placeholder="ex: 1949" />
+      </label>
+
+      <label>
+        Statut
+        <select formControlName="statut">
+          <option value="DISPONIBLE">DISPONIBLE</option>
+          <option value="EMPRUNTE">EMPRUNTE</option>
+          <option value="PERDU">PERDU</option>
+        </select>
+      </label>
+    </div>
+
+    <label>
+      Resume
+      <textarea formControlName="resume" rows="2" placeholder="Courte description"></textarea>
+    </label>
+
+    <!-- Genres : relation N:M, geree via une selection de cases a cocher -->
+    <fieldset class="genres-choix">
+      <legend>Genres</legend>
+      @for (g of genres(); track g.id) {
+        <label class="case">
+          <input type="checkbox" [checked]="estSelectionne(g.id)" (change)="toggleGenre(g.id)" />
+          {{ g.nom }}
+        </label>
+      }
+    </fieldset>
+
+    @if (erreur()) {
+      <p class="champ-erreur">{{ erreur() }}</p>
+    }
+
+    <div class="form-boutons">
+      <button type="submit" class="btn-principal">
+        {{ editionId() === null ? 'Ajouter' : 'Enregistrer' }}
+      </button>
+      @if (editionId() !== null) {
+        <button type="button" class="btn-secondaire" (click)="annuler()">Annuler</button>
+      }
+    </div>
+  </form>
+
+  <!-- Liste des livres -->
+  <div class="carte liste">
+    <h2>Mes livres ({{ nombreLivres() }})</h2>
+
+    @for (livre of livres(); track livre.id) {
+      <app-livre-item
+        [livre]="livre"
+        (modifier)="commencerModification($event)"
+        (supprimer)="supprimer($event)">
+      </app-livre-item>
+    } @empty {
+      <p class="vide">Aucun livre pour l'instant.</p>
+    }
+  </div>
+</section>

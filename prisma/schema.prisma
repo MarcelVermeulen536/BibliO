@@ -1,0 +1,87 @@
+// Schema Prisma de BiblioTheque
+// Le client genere du code TypeScript a partir de ces modeles.
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Base de donnees : SQLite local (un simple fichier .db, aucun serveur).
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Valeurs fixes pour le statut d'un livre (enum Prisma).
+enum Statut {
+  DISPONIBLE
+  EMPRUNTE
+  PERDU
+}
+
+// 1. Auteur : un auteur ecrit plusieurs livres (relation 1:N).
+model Auteur {
+  id     Int     @id @default(autoincrement())
+  nom    String
+  prenom String
+  livres Livre[] // cote "1" : la liste des livres de cet auteur
+}
+
+// 2. Editeur : une maison d'edition publie plusieurs livres (relation 1:N).
+model Editeur {
+  id     Int     @id @default(autoincrement())
+  nom    String  @unique
+  livres Livre[]
+}
+
+// 3. Genre : relie aux livres par une relation N:M (via LivreGenre).
+model Genre {
+  id      Int          @id @default(autoincrement())
+  nom     String       @unique
+  couleur String       @default("#cccccc")
+  livres  LivreGenre[]
+}
+
+// 4. Livre : entite principale du CRUD (creer / lire / modifier / supprimer).
+model Livre {
+  id        Int          @id @default(autoincrement())
+  titre     String
+  annee     Int? // champ optionnel (nullable)
+  resume    String? // champ optionnel
+  statut    Statut       @default(DISPONIBLE)
+  // Relation 1:N vers Auteur : supprimer l'auteur supprime ses livres.
+  auteur    Auteur       @relation(fields: [auteurId], references: [id], onDelete: Cascade)
+  auteurId  Int
+  // Relation 1:N vers Editeur : si on supprime l'editeur, le livre reste (editeurId = NULL).
+  editeur   Editeur?     @relation(fields: [editeurId], references: [id], onDelete: SetNull)
+  editeurId Int?
+  genres    LivreGenre[] // cote N:M
+  emprunts  Emprunt[] // un livre peut avoir plusieurs emprunts (1:N)
+}
+
+// 5. LivreGenre : table de jonction explicite pour la relation N:M Livre <-> Genre.
+model LivreGenre {
+  livre   Livre @relation(fields: [livreId], references: [id], onDelete: Cascade)
+  livreId Int
+  genre   Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  genreId Int
+
+  @@id([livreId, genreId]) // cle primaire composee
+}
+
+// 6. Membre : une personne qui emprunte des livres (relation 1:N vers Emprunt).
+model Membre {
+  id       Int       @id @default(autoincrement())
+  nom      String
+  email    String    @unique
+  emprunts Emprunt[]
+}
+
+// 7. Emprunt : relie un Livre et un Membre (deux relations 1:N).
+model Emprunt {
+  id          Int     @id @default(autoincrement())
+  dateEmprunt String // date au format ISO 8601 (TEXT), comme vu en cours SQLite
+  dateRetour  String? // null tant que le livre n'est pas rendu
+  livre       Livre   @relation(fields: [livreId], references: [id], onDelete: Cascade)
+  livreId     Int
+  membre      Membre  @relation(fields: [membreId], references: [id], onDelete: Cascade)
+  membreId    Int
+}

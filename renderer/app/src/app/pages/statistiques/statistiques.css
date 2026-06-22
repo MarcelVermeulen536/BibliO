@@ -1,0 +1,75 @@
+.cartes-chiffres {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.chiffre {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+}
+
+.chiffre .valeur {
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  color: #4f46e5;
+}
+
+.chiffre .libelle {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.carte {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.carte h3 {
+  margin-top: 0;
+}
+
+.ligne-genre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.nom-genre {
+  width: 130px;
+  font-size: 14px;
+}
+
+.barre-fond {
+  flex: 1;
+  background: #f3f4f6;
+  border-radius: 6px;
+  height: 18px;
+  overflow: hidden;
+}
+
+.barre {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s;
+}
+
+.nb {
+  width: 28px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.vide {
+  color: #9ca3af;
+  font-style: italic;
+}

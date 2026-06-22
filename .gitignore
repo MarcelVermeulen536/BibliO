@@ -1,0 +1,15 @@
+# Dependances
+node_modules/
+renderer/app/node_modules/
+
+# Builds generes
+dist/
+renderer/app/dist/
+renderer/app/.angular/
+
+# Base de donnees SQLite locale (generee par les migrations / le seed)
+prisma/dev.db
+prisma/dev.db-journal
+
+# Logs
+*.log

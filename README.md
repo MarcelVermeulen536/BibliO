@@ -74,9 +74,9 @@ ElectronService         (seul a connaitre window.api)
       v   window.api.xxx()
 preload.ts              (contextBridge -> ipcRenderer.invoke)
       v   IPC
-main.ts                 (ipcMain.handle, un try/catch par canal)
+main.ts                 (ipcMain.handle : handlers minces qui delèguent)
       v
-livre.repository.ts     (toutes les requetes Prisma)
+livre.repository.ts     (requetes Prisma + try/catch sur les ecritures)
       v
 Prisma  ->  SQLite (prisma/dev.db)
 ```

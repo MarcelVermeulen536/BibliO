@@ -52,44 +52,60 @@ export function getLivres() {
 }
 
 // CREATE : cree un livre et ses liens vers les genres (relation N:M).
-export function createLivre(input: LivreInput) {
-  return prisma.livre.create({
-    data: {
-      titre: input.titre,
-      annee: input.annee,
-      resume: input.resume,
-      statut: verifierStatut(input.statut),
-      auteurId: input.auteurId,
-      editeurId: input.editeurId,
-      genres: { create: input.genreIds.map((genreId) => ({ genreId })) },
-    },
-    include: livreAvecRelations,
-  });
+// Les operations d'ecriture sont entourees d'un try/catch (vu en cours).
+export async function createLivre(input: LivreInput) {
+  try {
+    return await prisma.livre.create({
+      data: {
+        titre: input.titre,
+        annee: input.annee,
+        resume: input.resume,
+        statut: verifierStatut(input.statut),
+        auteurId: input.auteurId,
+        editeurId: input.editeurId,
+        genres: { create: input.genreIds.map((genreId) => ({ genreId })) },
+      },
+      include: livreAvecRelations,
+    });
+  } catch (e) {
+    console.error('Erreur createLivre :', e);
+    throw e; // on relance pour que le renderer puisse afficher l'erreur
+  }
 }
 
 // UPDATE : modifie un livre ; on remplace ses genres (on efface puis on recree les liens).
-export function updateLivre(id: number, input: LivreInput) {
-  return prisma.livre.update({
-    where: { id },
-    data: {
-      titre: input.titre,
-      annee: input.annee,
-      resume: input.resume,
-      statut: verifierStatut(input.statut),
-      auteurId: input.auteurId,
-      editeurId: input.editeurId,
-      genres: {
-        deleteMany: {},
-        create: input.genreIds.map((genreId) => ({ genreId })),
+export async function updateLivre(id: number, input: LivreInput) {
+  try {
+    return await prisma.livre.update({
+      where: { id },
+      data: {
+        titre: input.titre,
+        annee: input.annee,
+        resume: input.resume,
+        statut: verifierStatut(input.statut),
+        auteurId: input.auteurId,
+        editeurId: input.editeurId,
+        genres: {
+          deleteMany: {},
+          create: input.genreIds.map((genreId) => ({ genreId })),
+        },
       },
-    },
-    include: livreAvecRelations,
-  });
+      include: livreAvecRelations,
+    });
+  } catch (e) {
+    console.error('Erreur updateLivre :', e);
+    throw e;
+  }
 }
 
 // DELETE : supprime un livre (ses liens genres et emprunts partent en cascade).
-export function deleteLivre(id: number) {
-  return prisma.livre.delete({ where: { id } });
+export async function deleteLivre(id: number) {
+  try {
+    return await prisma.livre.delete({ where: { id } });
+  } catch (e) {
+    console.error('Erreur deleteLivre :', e);
+    throw e;
+  }
 }
 
 // ---- Donnees de support pour remplir le formulaire ----
@@ -124,4 +140,9 @@ export async function getStatistiques() {
   }));
 
   return { totalLivres, totalEmpruntes, parGenre };
+}
+
+// Ferme proprement la connexion a la base (appelee a la fermeture de l'app).
+export async function fermerConnexion(): Promise<void> {
+  await prisma.$disconnect();
 }

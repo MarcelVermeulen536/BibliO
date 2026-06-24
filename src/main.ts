@@ -1,5 +1,6 @@
-// Main process Electron : cree la fenetre et expose les handlers IPC.
-// C'est le seul endroit (avec le repository) qui touche a la base de donnees.
+// Main process Electron : cree la fenetre et enregistre les handlers IPC.
+// Les handlers sont volontairement minces : ils delèguent au repository,
+// qui contient toute la logique Prisma et la gestion des erreurs.
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import * as repo from './repository/livre.repository';
@@ -32,82 +33,18 @@ app.on('window-all-closed', () => {
 
 // Ferme proprement la connexion Prisma a la fermeture de l'app.
 app.on('before-quit', async () => {
-  await repo.prisma.$disconnect();
+  await repo.fermerConnexion();
 });
 
 // ---- Handlers IPC ----
-// Chaque appel Prisma est dans un try/catch (exige par les consignes).
-// On logge l'erreur cote main puis on la relance : l'appel renderer est rejete
-// et le service Angular peut l'attraper a son tour.
+// Chaque canal delègue simplement au repository (pas de logique ici).
+ipcMain.handle('livre:getAll', () => repo.getLivres());
+ipcMain.handle('livre:create', (_event, input: LivreInput) => repo.createLivre(input));
+ipcMain.handle('livre:update', (_event, id: number, input: LivreInput) => repo.updateLivre(id, input));
+ipcMain.handle('livre:delete', (_event, id: number) => repo.deleteLivre(id));
 
-ipcMain.handle('livre:getAll', async () => {
-  try {
-    return await repo.getLivres();
-  } catch (e) {
-    console.error('Erreur livre:getAll', e);
-    throw e;
-  }
-});
+ipcMain.handle('auteur:getAll', () => repo.getAuteurs());
+ipcMain.handle('editeur:getAll', () => repo.getEditeurs());
+ipcMain.handle('genre:getAll', () => repo.getGenres());
 
-ipcMain.handle('livre:create', async (_event, input: LivreInput) => {
-  try {
-    return await repo.createLivre(input);
-  } catch (e) {
-    console.error('Erreur livre:create', e);
-    throw e;
-  }
-});
-
-ipcMain.handle('livre:update', async (_event, id: number, input: LivreInput) => {
-  try {
-    return await repo.updateLivre(id, input);
-  } catch (e) {
-    console.error('Erreur livre:update', e);
-    throw e;
-  }
-});
-
-ipcMain.handle('livre:delete', async (_event, id: number) => {
-  try {
-    return await repo.deleteLivre(id);
-  } catch (e) {
-    console.error('Erreur livre:delete', e);
-    throw e;
-  }
-});
-
-ipcMain.handle('auteur:getAll', async () => {
-  try {
-    return await repo.getAuteurs();
-  } catch (e) {
-    console.error('Erreur auteur:getAll', e);
-    throw e;
-  }
-});
-
-ipcMain.handle('editeur:getAll', async () => {
-  try {
-    return await repo.getEditeurs();
-  } catch (e) {
-    console.error('Erreur editeur:getAll', e);
-    throw e;
-  }
-});
-
-ipcMain.handle('genre:getAll', async () => {
-  try {
-    return await repo.getGenres();
-  } catch (e) {
-    console.error('Erreur genre:getAll', e);
-    throw e;
-  }
-});
-
-ipcMain.handle('stats:get', async () => {
-  try {
-    return await repo.getStatistiques();
-  } catch (e) {
-    console.error('Erreur stats:get', e);
-    throw e;
-  }
-});
+ipcMain.handle('stats:get', () => repo.getStatistiques());

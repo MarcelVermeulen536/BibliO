@@ -13,6 +13,7 @@ export class Statistiques implements OnInit {
   private livreService = inject(LivreService);
 
   stats = signal<StatsData | null>(null);
+  erreur = signal<string>('');
 
   // Signal derive : le plus grand nombre de livres d'un genre (pour les barres).
   maxParGenre = computed(() => {
@@ -24,7 +25,11 @@ export class Statistiques implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    this.stats.set(await this.livreService.getStatistiques());
+    try {
+      this.stats.set(await this.livreService.getStatistiques());
+    } catch {
+      this.erreur.set('Impossible de charger les statistiques.');
+    }
   }
 
   // Largeur (%) d'une barre par rapport au genre le plus fourni.

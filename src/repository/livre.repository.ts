@@ -52,20 +52,34 @@ export function getLivres() {
 }
 
 // CREATE : cree un livre et ses liens vers les genres (relation N:M).
-// Les operations d'ecriture sont entourees d'un try/catch (vu en cours).
+// On utilise une TRANSACTION : le livre ET ses liens genres sont ecrits ensemble.
+// Si une etape echoue, tout est annule (rien n'est enregistre).
+// Syntaxe interactive async (tx) car la 2e ecriture depend de l'id cree par la 1re.
 export async function createLivre(input: LivreInput) {
   try {
-    return await prisma.livre.create({
-      data: {
-        titre: input.titre,
-        annee: input.annee,
-        resume: input.resume,
-        statut: verifierStatut(input.statut),
-        auteurId: input.auteurId,
-        editeurId: input.editeurId,
-        genres: { create: input.genreIds.map((genreId) => ({ genreId })) },
-      },
-      include: livreAvecRelations,
+    return await prisma.$transaction(async (tx) => {
+      // 1. on cree le livre
+      const livre = await tx.livre.create({
+        data: {
+          titre: input.titre,
+          annee: input.annee,
+          resume: input.resume,
+          statut: verifierStatut(input.statut),
+          auteurId: input.auteurId,
+          editeurId: input.editeurId,
+        },
+      });
+
+      // 2. on cree ses liens vers les genres (table de jonction) avec l'id du livre
+      for (const genreId of input.genreIds) {
+        await tx.livreGenre.create({ data: { livreId: livre.id, genreId } });
+      }
+
+      // 3. on renvoie le livre complet (avec auteur, editeur et genres)
+      return tx.livre.findUniqueOrThrow({
+        where: { id: livre.id },
+        include: livreAvecRelations,
+      });
     });
   } catch (e) {
     console.error('Erreur createLivre :', e);

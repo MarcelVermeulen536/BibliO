@@ -74,7 +74,7 @@ ElectronService         (seul a connaitre window.api)
       v   window.api.xxx()
 preload.ts              (contextBridge -> ipcRenderer.invoke)
       v   IPC
-main.ts                 (ipcMain.handle : handlers minces qui delèguent)
+main.ts -> ipc/*.ts     (ipcMain.handle : handlers minces, separes par service)
       v
 livre.repository.ts     (requetes Prisma + try/catch sur les ecritures)
       v
@@ -86,9 +86,13 @@ Prisma  ->  SQLite (prisma/dev.db)
 ```
 .
 ├── src/                          # Main process (Electron + Node.js)
-│   ├── main.ts                   # Fenetre + handlers IPC
+│   ├── main.ts                   # Fenetre + enregistrement des handlers IPC
 │   ├── preload.ts                # Pont securise contextBridge -> window.api
 │   ├── seed.ts                   # Script de peuplement de la base
+│   ├── ipc/                      # Handlers IPC separes par service
+│   │   ├── livre.ipc.ts          # handlers livre:* (CRUD)
+│   │   ├── catalogue.ipc.ts      # handlers auteur / editeur / genre
+│   │   └── statistiques.ipc.ts   # handler stats:get
 │   └── repository/
 │       └── livre.repository.ts   # Toutes les requetes Prisma (pattern Repository)
 ├── renderer/app/                 # Application Angular (renderer)

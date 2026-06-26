@@ -1,10 +1,12 @@
 // Main process Electron : cree la fenetre et enregistre les handlers IPC.
-// Les handlers sont volontairement minces : ils delèguent au repository,
-// qui contient toute la logique Prisma et la gestion des erreurs.
-import { app, BrowserWindow, ipcMain } from 'electron';
+// Les handlers sont separes par service dans src/ipc/ ; main.ts les importe
+// et les enregistre. La logique Prisma vit dans le repository.
+import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as repo from './repository/livre.repository';
-import { LivreInput } from './repository/livre.repository';
+import { enregistrerHandlersLivre } from './ipc/livre.ipc';
+import { enregistrerHandlersCatalogue } from './ipc/catalogue.ipc';
+import { enregistrerHandlersStatistiques } from './ipc/statistiques.ipc';
 
 // Cree la fenetre principale et y charge l'app Angular buildee.
 function createWindow(): void {
@@ -24,6 +26,11 @@ function createWindow(): void {
   );
 }
 
+// Enregistrement des handlers IPC (separes par service dans src/ipc/).
+enregistrerHandlersLivre();
+enregistrerHandlersCatalogue();
+enregistrerHandlersStatistiques();
+
 app.whenReady().then(createWindow);
 
 // Sur Windows/Linux, fermer toutes les fenetres quitte l'application.
@@ -35,16 +42,3 @@ app.on('window-all-closed', () => {
 app.on('before-quit', async () => {
   await repo.fermerConnexion();
 });
-
-// ---- Handlers IPC ----
-// Chaque canal delègue simplement au repository (pas de logique ici).
-ipcMain.handle('livre:getAll', () => repo.getLivres());
-ipcMain.handle('livre:create', (_event, input: LivreInput) => repo.createLivre(input));
-ipcMain.handle('livre:update', (_event, id: number, input: LivreInput) => repo.updateLivre(id, input));
-ipcMain.handle('livre:delete', (_event, id: number) => repo.deleteLivre(id));
-
-ipcMain.handle('auteur:getAll', () => repo.getAuteurs());
-ipcMain.handle('editeur:getAll', () => repo.getEditeurs());
-ipcMain.handle('genre:getAll', () => repo.getGenres());
-
-ipcMain.handle('stats:get', () => repo.getStatistiques());
